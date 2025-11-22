@@ -1,8 +1,8 @@
 import express from "express";
-import "dotenv/config";
+import "dotenv/config.js";
 import cors from "cors";
 import http from "http";
-import { connectDB } from "./lib/db";
+import { connectDB } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
