@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
 import assets from "../assets/assets";
 import { formatMessageTime } from "../lib/utils";
 import ChatContext from "../../context/ChatContext.js";
@@ -13,24 +14,34 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
   const scrollEnd = useRef();
 
   const [input, setInput] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (input.trim() === "") return null;
-    await sendMessage({ text: input.trim() });
+    const trimmedText = input.trim();
+
+    if (!trimmedText && !selectedImage) return null;
+
+    await sendMessage({
+      ...(trimmedText ? { text: trimmedText } : {}),
+      ...(selectedImage ? { image: selectedImage } : {}),
+    });
+
     setInput("");
+    setSelectedImage("");
   };
 
   const handleSendImage = async (e) => {
     const file = e.target.files?.[0];
     if (!file?.type?.startsWith("image/")) {
       toast.error("select an image file");
+      e.target.value = "";
       return;
     }
     const reader = new FileReader();
 
-    reader.onloadend = async () => {
-      await sendMessage({ image: reader.result });
+    reader.onloadend = () => {
+      setSelectedImage(reader.result);
       e.target.value = "";
     };
     reader.readAsDataURL(file);
@@ -124,6 +135,22 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
       </div>
 
       <div className="absolute left-0 bottom-0 right-0 flex items-center gap-3 p-3">
+        {selectedImage && (
+          <div className="relative mr-2">
+            <img
+              src={selectedImage}
+              alt="Selected preview"
+              className="w-25 h-25 rounded-lg object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => setSelectedImage("")}
+              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-black/70 text-white text-[10px] leading-none"
+              aria-label="Remove selected image">
+              x
+            </button>
+          </div>
+        )}
         <div className="flex flex-1 items-center bg-[#282142] px-3 rounded-full">
           <input
             onChange={(e) => setInput(e.target.value)}
@@ -137,7 +164,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
             onChange={handleSendImage}
             type="file"
             id="image"
-            accept="image/png , image/jpeg"
+            accept="image/png , image/jpeg , image/jpg, image/webp, image/gif, image/svg+xml, image/apng"
             hidden
           />
           <label htmlFor="image">
@@ -165,6 +192,11 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
       </p>
     </div>
   );
+};
+
+ChatContainer.propTypes = {
+  showRightSideBar: PropTypes.bool.isRequired,
+  toggleRightSideBar: PropTypes.func.isRequired,
 };
 
 export default ChatContainer;

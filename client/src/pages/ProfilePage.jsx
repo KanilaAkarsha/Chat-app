@@ -53,13 +53,13 @@ const ProfilePage = () => {
               hidden
             />
             <img
+              className={`max-w-20 aspect-square rounded-full mx-2 max-sm:mt-5 ${selectedImg && "rounded-full"}`}
               src={
                 selectedImg
                   ? URL.createObjectURL(selectedImg)
-                  : assets.avatar_icon
+                  : authUser?.profilePic || assets.avatar_icon
               }
               alt=""
-              className={`w-12 h-12 ${selectedImg && "rounded-full"}`}
             />
             <span>Upload Profile Picture</span>
           </label>
@@ -91,10 +91,8 @@ const ProfilePage = () => {
           </button>
         </form>
         <img
-          className={`max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10 ${
-            selectedImg ? "rounded-full" : ""
-          }`}
-          src={authUser?.profilePic || assets.logo_icon}
+          className={`max-w-54 aspect-square rounded-full mx-10 max-sm:mt-10 `}
+          src={assets.logo_icon}
           alt=""
         />
       </div>
