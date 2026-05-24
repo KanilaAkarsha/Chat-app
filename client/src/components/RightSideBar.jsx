@@ -1,16 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import assets, { imagesDummyData } from "../assets/assets";
-import { ChatContext } from "../../context/ChatContext";
-import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import assets from "../assets/assets";
+import ChatContext from "../../context/ChatContext.js";
+import AuthContext from "../../context/AuthContext.js";
 
 const RightSideBar = () => {
   const { selectedUser, messages } = useContext(ChatContext);
   const { logout, onlineUsers } = useContext(AuthContext);
-  const [msgImages, setMsgImages] = useState([]);
-
-  useEffect(() => {
-    setMsgImages(messages.filter((msg) => msg.image).map((msg) => msg.image));
-  }, [messages]);
+  const msgImages = messages.filter((msg) => msg.image).map((msg) => msg.image);
   return (
     selectedUser && (
       <div
@@ -36,13 +32,14 @@ const RightSideBar = () => {
         <div className="px-5 text-xs">
           <p>Media</p>
           <div className="mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
-            {msgImages.map((url, index) => (
-              <div
-                key={index}
+            {msgImages.map((url) => (
+              <button
+                key={url}
+                type="button"
                 onClick={() => window.open(url)}
-                className="cursor-pointer rounded">
+                className="cursor-pointer rounded text-left">
                 <img src={url} alt="" className="h-full rounded-md" />
-              </div>
+              </button>
             ))}
           </div>
         </div>

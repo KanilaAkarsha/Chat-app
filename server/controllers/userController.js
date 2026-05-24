@@ -4,10 +4,12 @@ import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudnary.js";
 
 export const signup = async (req, res) => {
-  const { email, fullName, password, bio } = req.body;
+  const { email, password } = req.body;
+  const fullName = req.body.fullName || req.body.FullName;
+  const bio = req.body.bio || "";
 
   try {
-    if (!email || !fullName || !password || !bio) {
+    if (!email || !fullName || !password) {
       return res.json({ success: false, message: "All fields are required" });
     }
     const user = await User.findOne({ email });
@@ -48,11 +50,19 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    if (!email || !password) {
+      return res.json({ success: false, message: "Email and password are required" });
+    }
+
     const userData = await User.findOne({ email });
+
+    if (!userData) {
+      return res.json({ success: false, message: "Invalid credentials" });
+    }
 
     const isPasswordCorrect = await bcrypt.compare(password, userData.password);
 
-    if (!userData || !isPasswordCorrect) {
+    if (!isPasswordCorrect) {
       return res.json({ success: false, message: "Invalid credentials" });
     }
 

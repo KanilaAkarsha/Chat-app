@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import assets from "../assets/assets";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
-import { ChatContext } from "../../context/ChatContext";
+import AuthContext from "../../context/AuthContext.js";
+import ChatContext from "../../context/ChatContext.js";
 
 const SideBar = () => {
   const {
@@ -14,17 +14,17 @@ const SideBar = () => {
     setUnseenMessages,
   } = useContext(ChatContext);
   const { logout, onlineUsers } = useContext(AuthContext);
-  const [input, setInput] = useState(false);
+  const [input, setInput] = useState("");
   const navigate = useNavigate();
   const filteredUsers = input
     ? users.filter((user) =>
-        user.fullName.toLowerCase().includes(input.toLowerCase())
+        user.fullName.toLowerCase().includes(input.toLowerCase()),
       )
     : users;
 
   useEffect(() => {
     getUsers();
-  }, [onlineUsers]);
+  }, [onlineUsers, getUsers]);
 
   return (
     <div
@@ -41,15 +41,19 @@ const SideBar = () => {
               className="max-h-5 cursor-pointer"
             />
             <div className="absolute right-0 top-full z-20 bg-[#282142] border border-gray-600 text-gray-100 rounded-md p-5 w-32 group-hover:block hidden">
-              <p
+              <button
+                type="button"
                 onClick={() => navigate("/profile")}
-                className="cursor-pointer text-sm">
+                className="cursor-pointer text-sm text-left w-full">
                 Edit Profile
-              </p>
+              </button>
               <hr className="my-2 border-2 border-gray-500" />
-              <p onClick={() => logout()} className="cursor-pointer text-sm">
+              <button
+                type="button"
+                onClick={() => logout()}
+                className="cursor-pointer text-sm text-left w-full">
                 Logout
-              </p>
+              </button>
             </div>
           </div>
         </div>
@@ -65,14 +69,15 @@ const SideBar = () => {
         </div>
 
         <div className="flex flex-col mt-5 gap-2">
-          {filteredUsers.map((user, index) => (
-            <div
+          {filteredUsers.map((user) => (
+            <button
+              type="button"
               onClick={() => {
                 setSelectedUser(user);
                 setUnseenMessages((prev) => ({ ...prev, [user._id]: 0 }));
               }}
-              key={index}
-              className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${
+              key={user._id}
+              className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm text-left w-full ${
                 selectedUser?._id === user._id && "bg-[#282142]/50"
               } `}>
               <img
@@ -90,10 +95,10 @@ const SideBar = () => {
               </div>
               {unseenMessages[user._id] > 0 && (
                 <p className="absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50">
-                  {unseenMessages[users._id]}
+                  {unseenMessages[user._id]}
                 </p>
               )}
-            </div>
+            </button>
           ))}
         </div>
       </div>

@@ -6,9 +6,9 @@ const userSchema = new mongoose.Schema(
     fullName: { type: String, required: true },
     password: { type: String, required: true, minLength: 6 },
     profilePic: { type: String, default: "" },
-    bio: { type: String },
+    bio: { type: String, default: "I am using QuickChat!" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);

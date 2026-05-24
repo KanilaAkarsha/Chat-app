@@ -1,5 +1,5 @@
 import cloudinary from "../lib/cloudnary.js";
-import Message from "../models/Message";
+import Message from "../models/Message.js";
 import User from "../models/User.js";
 import { io, userSocketMap } from "../server.js";
 
@@ -7,7 +7,7 @@ export const getUsersForSidebar = async (req, res) => {
   try {
     const userId = req.user._id;
     const filteredUsers = await User.find({ _id: { $ne: userId } }).select(
-      "-password"
+      "-password",
     );
 
     const unseenMessages = {};
@@ -46,7 +46,7 @@ export const getMessages = async (req, res) => {
 
     await Message.updateMany(
       { senderId: selectedUserId, receiverId: myId },
-      { seen: true }
+      { seen: true },
     );
 
     res.json({ success: true, messages });
