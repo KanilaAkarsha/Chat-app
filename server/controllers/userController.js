@@ -3,19 +3,29 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudnary.js";
 
+const normalizeEmail = (email) => (email || "").trim().toLowerCase();
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export const signup = async (req, res) => {
-  const { email, password } = req.body;
-  const fullName = req.body.fullName || req.body.FullName;
-  const bio = req.body.bio || "";
+  const email = normalizeEmail(req.body.email);
+  const password = req.body.password;
+  const fullName = (req.body.fullName || req.body.FullName || "").trim();
+  const bio = (req.body.bio || "").trim();
 
   try {
     if (!email || !fullName || !password) {
-      return res.json({ success: false, message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      email: new RegExp(`^${escapeRegExp(email)}$`, "i"),
+    });
 
     if (user) {
-      return res.json({ success: false, message: "User already exists" });
+      return res
+        .status(409)
+        .json({ success: false, message: "User already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -27,6 +37,8 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       bio,
     });
+
+    console.log("New user created:", newUser);
 
     const token = generateToken(newUser._id);
 
@@ -47,23 +59,32 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const email = normalizeEmail(req.body.email);
+  const password = req.body.password;
 
   try {
     if (!email || !password) {
-      return res.json({ success: false, message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email and password are required" });
     }
 
-    const userData = await User.findOne({ email });
+    const userData = await User.findOne({
+      email: new RegExp(`^${escapeRegExp(email)}$`, "i"),
+    });
 
     if (!userData) {
-      return res.json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, userData.password);
 
     if (!isPasswordCorrect) {
-      return res.json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
     }
 
     const token = generateToken(userData._id);
@@ -101,14 +122,14 @@ export const updateProfile = async (req, res) => {
       updatedUser = await User.findByIdAndUpdate(
         userId,
         { fullName, bio },
-        { new: true }
+        { new: true },
       );
     } else {
       const upload = await cloudinary.uploader.upload(profilePic);
       updatedUser = await User.findByIdAndUpdate(
         userId,
         { fullName, bio, profilePic: upload.secure_url },
-        { new: true }
+        { new: true },
       );
     }
 
