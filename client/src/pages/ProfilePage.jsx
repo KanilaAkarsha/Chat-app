@@ -9,15 +9,18 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState(authUser?.fullName || "");
   const [bio, setBio] = useState(authUser?.bio || "");
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setIsUpdating(true);
     if (selectedImg) {
       const reader = new FileReader();
       reader.readAsDataURL(selectedImg);
       reader.onload = async () => {
         const base64Image = reader.result;
         await updateProfile({ profilePic: base64Image, fullName: name, bio });
+        setIsUpdating(false);
         navigate("/");
       };
     } else {
@@ -81,7 +84,7 @@ const ProfilePage = () => {
           <button
             type="submit"
             className="bg-linear-to-r from-purple-400 to-violet-600 text-white p-2 text-lg rounded-full cursor-pointer">
-            Save Changes
+            {isUpdating ? "Saving..." : "Save Changes"}
           </button>
           <button
             type="button"
