@@ -85,41 +85,39 @@ app.use("/api/messages", messageRouter);
 
 await connectDB();
 
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 5000;
-  const listenServer = () => {
-    const listener = server.listen(PORT, () => {
-      console.log("Server is running on port " + PORT);
-    });
+const PORT = process.env.PORT || 5000;
+const listenServer = () => {
+  const listener = server.listen(PORT, () => {
+    console.log("Server is running on port " + PORT);
+  });
 
-    listener.on("error", async (error) => {
-      if (error.code !== "EADDRINUSE") {
-        console.error(error);
-        process.exit(1);
+  listener.on("error", async (error) => {
+    if (error.code !== "EADDRINUSE") {
+      console.error(error);
+      process.exit(1);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:${PORT}/api/status`);
+      if (response.ok) {
+        console.log(
+          `Port ${PORT} is already serving this app, so this launch will exit cleanly.`,
+        );
+        process.exit(0);
         return;
       }
+    } catch {
+      // fall through to the user-facing message below
+    }
 
-      try {
-        const response = await fetch(`http://localhost:${PORT}/api/status`);
-        if (response.ok) {
-          console.log(
-            `Port ${PORT} is already serving this app, so this launch will exit cleanly.`,
-          );
-          process.exit(0);
-          return;
-        }
-      } catch {
-        // fall through to the user-facing message below
-      }
+    console.error(
+      `Port ${PORT} is already in use. Stop the existing process or change PORT.`,
+    );
+    process.exit(1);
+  });
+};
 
-      console.error(
-        `Port ${PORT} is already in use. Stop the existing process or change PORT.`,
-      );
-      process.exit(1);
-    });
-  };
-
-  listenServer();
-}
+listenServer();
 
 export default server;
