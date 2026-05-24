@@ -123,7 +123,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
                     : selectedUser?.profilePic || assets.avatar_icon
                 }
                 alt=""
-                className="w-7 rounded-full"
+                className="w-7 h-7 rounded-full"
               />
               <p className="text-gray-500">
                 {formatMessageTime(msg.createdAt)}

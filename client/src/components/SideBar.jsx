@@ -6,7 +6,6 @@ import ChatContext from "../../context/ChatContext.js";
 
 const SideBar = () => {
   const {
-    authUser,
     getUsers,
     users,
     selectedUser,
@@ -14,6 +13,7 @@ const SideBar = () => {
     unseenMessages,
     setUnseenMessages,
   } = useContext(ChatContext);
+  const { authUser } = useContext(AuthContext);
   const { onlineUsers } = useContext(AuthContext);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
