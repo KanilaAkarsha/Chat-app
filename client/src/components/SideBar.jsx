@@ -6,6 +6,7 @@ import ChatContext from "../../context/ChatContext.js";
 
 const SideBar = () => {
   const {
+    authUser,
     getUsers,
     users,
     selectedUser,
@@ -13,7 +14,7 @@ const SideBar = () => {
     unseenMessages,
     setUnseenMessages,
   } = useContext(ChatContext);
-  const { logout, onlineUsers } = useContext(AuthContext);
+  const { onlineUsers } = useContext(AuthContext);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
   const filteredUsers = input
@@ -34,27 +35,17 @@ const SideBar = () => {
       <div className="pb-5">
         <div className="flex justify-between items-center">
           <img src={assets.logo} alt="logo" className="max-w-40" />
-          <div className="relative py-2 group">
-            <img
-              src={assets.menu_icon}
-              alt="menu icon"
-              className="max-h-5 cursor-pointer"
-            />
-            <div className="absolute right-0 top-full z-20 bg-[#282142] border border-gray-600 text-gray-100 rounded-md p-5 w-32 group-hover:block hidden">
-              <button
-                type="button"
-                onClick={() => navigate("/profile")}
-                className="cursor-pointer text-sm text-left w-full">
-                Edit Profile
-              </button>
-              <hr className="my-2 border-2 border-gray-500" />
-              <button
-                type="button"
-                onClick={() => logout()}
-                className="cursor-pointer text-sm text-left w-full">
-                Logout
-              </button>
-            </div>
+          <div className="flex">
+            <button
+              type="button"
+              onClick={() => navigate("/profile")}
+              className="cursor-pointer text-sm text-left w-full">
+              <img
+                src={authUser?.profilePic || assets.avatar_icon}
+                alt="profile icon"
+                className="w-8 h-8 rounded-full border-2 border-gray-500"
+              />
+            </button>
           </div>
         </div>
         <div className="bg-[#282142] rounded-full flex items-center gap-2 py-2 px-4 mt-5">
