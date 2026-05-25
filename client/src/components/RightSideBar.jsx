@@ -6,12 +6,12 @@ import AuthContext from "../../context/AuthContext.js";
 
 const RightSideBar = ({ toggleRightSideBar }) => {
   const { selectedUser, messages } = useContext(ChatContext);
-  const { logout, onlineUsers } = useContext(AuthContext);
+  const { onlineUsers } = useContext(AuthContext);
   const msgImages = messages.filter((msg) => msg.image).map((msg) => msg.image);
   return (
     selectedUser && (
       <div
-        className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll md:relative md:block max-md:fixed max-md:inset-0 max-md:w-[85%] max-md:left-0 max-md:top-0 max-md:z-50 max-md:overflow-y-auto max-md:bg-[#0b1020]/95`}>
+        className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll md:relative md:block max-md:fixed max-md:inset-y-0 max-md:right-0 max-md:left-auto max-md:w-[85%] max-md:z-50 max-md:overflow-y-auto max-md:bg-[#0b1020]/95`}>
         <button
           type="button"
           onClick={() => toggleRightSideBar?.()}
@@ -48,11 +48,6 @@ const RightSideBar = ({ toggleRightSideBar }) => {
             ))}
           </div>
         </div>
-        <button
-          onClick={() => logout()}
-          className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer ">
-          Logout
-        </button>
       </div>
     )
   );

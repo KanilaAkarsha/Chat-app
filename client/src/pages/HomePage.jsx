@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import ChatContainer from "../components/ChatContainer";
 import RightSideBar from "../components/RightSideBar";
@@ -6,7 +6,23 @@ import ChatContext from "../../context/ChatContext.js";
 
 const HomePage = () => {
   const { selectedUser } = useContext(ChatContext);
-  const [showRightSideBar, setShowRightSideBar] = useState(true);
+  const [showRightSideBar, setShowRightSideBar] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia("(min-width: 768px)").matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+
+    const syncRightSideBar = (event) => {
+      setShowRightSideBar(event.matches);
+    };
+
+    syncRightSideBar(mediaQuery);
+    mediaQuery.addEventListener("change", syncRightSideBar);
+
+    return () => mediaQuery.removeEventListener("change", syncRightSideBar);
+  }, []);
 
   const toggleRightSideBar = () => {
     setShowRightSideBar((prev) => !prev);
