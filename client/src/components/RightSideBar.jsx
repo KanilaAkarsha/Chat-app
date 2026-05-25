@@ -50,7 +50,7 @@ const RightSideBar = ({ toggleRightSideBar }) => {
             ))}
           </div>
         </div>
-        <div className="px-5 pb-5 mt-5 border-t border-[#ffffff50] justify-end">
+        <div className="px-5 pb-5 justify-end mt-auto">
           <ClearChatButton />
         </div>
       </div>
