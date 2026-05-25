@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import ChatContext from "../../context/ChatContext.js";
 
 const ClearChatButton = ({
-  className = "items-center text-white text-center",
+  className = "items-center text-white text-center ",
 }) => {
   const { clearChatHistory, selectedUser } = useContext(ChatContext);
 
