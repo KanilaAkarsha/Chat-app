@@ -86,6 +86,13 @@ export const ChatProvider = ({ children }) => {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         axios.put(`/api/messages/mark/${newMessage._id}`);
       } else {
+        const sender = users.find((user) => user._id === newMessage.senderId);
+        const messagePreview = newMessage.text || "Sent an image";
+
+        toast(`${sender?.fullName || "New message"}: ${messagePreview}`, {
+          duration: 3000,
+        });
+
         setUnseenMessages((prevUnseenMessages) => ({
           ...prevUnseenMessages,
           [newMessage.senderId]: prevUnseenMessages[newMessage.senderId]
@@ -100,7 +107,7 @@ export const ChatProvider = ({ children }) => {
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
-  }, [socket, selectedUser, axios]);
+  }, [socket, selectedUser, axios, users]);
 
   const value = useMemo(
     () => ({
