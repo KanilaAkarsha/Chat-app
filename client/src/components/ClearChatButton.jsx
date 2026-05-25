@@ -21,7 +21,7 @@ const ClearChatButton = ({ className = "" }) => {
     <button
       type="button"
       onClick={handleClearChat}
-      className={`w-full py-3 rounded bg-red-500/80 text-white text-sm transition hover:bg-red-500 ${className}`}>
+      className={`w-full py-3  ${className}`}>
       Clear chat history
     </button>
   );
