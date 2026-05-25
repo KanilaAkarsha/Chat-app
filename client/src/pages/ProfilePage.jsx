@@ -8,8 +8,10 @@ const ProfilePage = () => {
   const [selectedImg, setSelectedImg] = useState(null);
   const navigate = useNavigate();
   const [name, setName] = useState(authUser?.fullName || "");
+  const [password, setPassword] = useState("");
   const [bio, setBio] = useState(authUser?.bio || "");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -28,6 +30,7 @@ const ProfilePage = () => {
         profilePic: authUser?.profilePic || "",
         fullName: name,
         bio,
+        password,
       });
       setIsUpdating(false);
       navigate("/");
@@ -79,6 +82,18 @@ const ProfilePage = () => {
             placeholder="Your Name"
             className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
+          <div>
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              type={showPassword ? "text" : "password"}
+              placeholder="Change Password"
+              className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+            />
+            <button onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
           <textarea
             onChange={(e) => setBio(e.target.value)}
             value={bio}
@@ -98,11 +113,6 @@ const ProfilePage = () => {
             Logout
           </button>
         </form>
-        <img
-          className={`max-w-54 sm:hidden aspect-square rounded-full mx-10 max-sm:mt-10 `}
-          src={assets.logo_icon}
-          alt=""
-        />
       </div>
     </div>
   );
