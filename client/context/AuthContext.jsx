@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
@@ -15,56 +16,80 @@ export const AuthProvider = ({ children }) => {
   });
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socket, setSocket] = useState(null);
+  const socketRef = useRef(null);
+
+  const disconnectSocket = useCallback(() => {
+    if (!socketRef.current) return;
+    socketRef.current.off("getOnlineUsers");
+    socketRef.current.disconnect();
+    socketRef.current = null;
+    setSocket(null);
+    setOnlineUsers([]);
+  }, []);
 
   const connectSocket = useCallback(
     (userData) => {
-      if (!userData || socket?.connected) return;
+      if (!userData?._id) return;
+
+      const existing = socketRef.current;
+      const existingUserId = existing?.io?.opts?.query?.userId;
+
+      // avoid creating duplicate sockets for the same logged-in user
+      if (existing?.connected && existingUserId === userData._id) {
+        return;
+      }
+
+      // if a stale socket exists (different user or half-open), clean it first
+      if (existing) {
+        disconnectSocket();
+      }
 
       const newSocket = io(backendUrl, {
+        transports: ["websocket"],
         query: {
           userId: userData._id,
         },
       });
-      newSocket.connect();
+
+      socketRef.current = newSocket;
       setSocket(newSocket);
 
       newSocket.on("getOnlineUsers", (userIds) => {
         setOnlineUsers(userIds);
       });
+
+      newSocket.on("disconnect", () => {
+        setOnlineUsers([]);
+      });
     },
-    [socket],
+    [disconnectSocket],
   );
 
-  const login = useCallback(
-    async (state, credentials) => {
-      try {
-        const { data } = await axios.post(`/api/auth/${state}`, credentials);
-        if (data.success) {
-          setAuthUser(data.userData);
-          connectSocket(data.userData);
-          setToken(data.token);
-          localStorage.setItem("authUser", JSON.stringify(data.userData));
-          localStorage.setItem("token", data.token);
-          toast.success(data.message);
-        } else {
-          toast.error(data.message);
-        }
-      } catch (error) {
-        toast.error(error.response?.data?.message || error.message);
+  const login = useCallback(async (state, credentials) => {
+    try {
+      const { data } = await axios.post(`/api/auth/${state}`, credentials);
+      if (data.success) {
+        setAuthUser(data.userData);
+        setToken(data.token);
+        localStorage.setItem("authUser", JSON.stringify(data.userData));
+        localStorage.setItem("token", data.token);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
       }
-    },
-    [connectSocket],
-  );
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  }, []);
 
   const logout = useCallback(async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("authUser");
     setToken(null);
     setAuthUser(null);
-    setOnlineUsers([]);
     toast.success("Logged out successfully");
-    socket?.disconnect();
-  }, [socket]);
+    disconnectSocket();
+  }, [disconnectSocket]);
 
   const updateProfile = useCallback(async (body) => {
     try {
@@ -88,13 +113,13 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   useEffect(() => {
-    // ensure socket connects when authUser is present (e.g., after refresh)
     if (authUser) {
-      // defer to avoid synchronous setState inside effect
       const t = setTimeout(() => connectSocket(authUser), 0);
       return () => clearTimeout(t);
     }
   }, [authUser, connectSocket]);
+
+  useEffect(() => () => disconnectSocket(), [disconnectSocket]);
 
   const value = useMemo(
     () => ({
@@ -110,4 +135,8 @@ export const AuthProvider = ({ children }) => {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

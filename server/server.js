@@ -26,8 +26,8 @@ const isAllowedOrigin = (origin) => {
     const u = new URL(origin);
     // allow any localhost origin during development
     if (u.hostname === "localhost") return true;
-  } catch (e) {
-    // fallthrough
+  } catch {
+    return false;
   }
   return false;
 };
@@ -53,7 +53,10 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User Disconnected", userId);
-    delete userSocketMap[userId];
+    // Only clear mapping if this socket is still the active one for that user.
+    if (userId && userSocketMap[userId] === socket.id) {
+      delete userSocketMap[userId];
+    }
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
