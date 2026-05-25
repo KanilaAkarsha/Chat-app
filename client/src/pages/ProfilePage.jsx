@@ -44,7 +44,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-no-repeat flex items-center justify-center relative p-4 ">
+    <div className="min-h-screen w-full bg-cover bg-no-repeat flex items-center justify-center relative p-4 ">
       <div className="w-[50%] max-w-xl backdrop-blur-2xl text-gray-300 border-2 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg">
         <form
           onSubmit={onSubmitHandler}
@@ -52,7 +52,7 @@ const ProfilePage = () => {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="flex left-4 top-4 w-25 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-white backdrop-blur-md border border-gray-600 hover:bg-white/20 transition"
+            className="flex left-4 top-4 w-25 items-center gap-2 cursor-pointer rounded-full bg-white/10 px-4 py-2 text-white backdrop-blur-md border border-gray-600 hover:bg-white/20 transition"
             aria-label="Go back home"
             title="Back to home">
             <img src={assets.arrow_icon} alt="" className="w-4" />
