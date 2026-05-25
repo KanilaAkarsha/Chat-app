@@ -5,6 +5,7 @@ import { formatMessageTime } from "../lib/utils";
 import ChatContext from "../../context/ChatContext.js";
 import AuthContext from "../../context/AuthContext.js";
 import toast from "react-hot-toast";
+import { ArrowLeftIcon } from "lucide-react";
 
 const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
   const { messages, selectedUser, setSelectedUser, sendMessage, getMessages } =
@@ -65,7 +66,14 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
         <img
           src={selectedUser.profilePic || assets.avatar_icon}
           alt=""
-          className="w-8 rounded-full"
+          onClick={toggleRightSideBar}
+          title={
+            showRightSideBar ? "Close details panel" : "Open details panel"
+          }
+          aria-label={
+            showRightSideBar ? "Close details panel" : "Open details panel"
+          }
+          className="w-8 h-8 rounded-full cursor-pointer"
         />
         <p className="flex-1 text-lg text-white flex items-center gap-2">
           {selectedUser.fullName}
@@ -76,19 +84,9 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
         <button
           type="button"
           onClick={() => setSelectedUser()}
-          className="md:hidden p-1"
+          className=" p-1"
           aria-label="Close conversation">
-          <img src={assets.arrow_icon} alt="info" className="max-w-7" />
-        </button>
-        <button
-          type="button"
-          onClick={toggleRightSideBar}
-          className="p-1 cursor-pointer relative z-10"
-          aria-label="Chat help"
-          title={
-            showRightSideBar ? "Close details panel" : "Open details panel"
-          }>
-          <img src={assets.help_icon} alt="" className="max-w-5" />
+          <ArrowLeftIcon className="w-5 h-5 cursor-pointer text-gray-400" />
         </button>
       </div>
 
@@ -178,9 +176,9 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
         <button
           type="button"
           onClick={handleSendMessage}
-          className="w-7 cursor-pointer"
+          className="w-10 cursor-pointer"
           aria-label="Send message">
-          <img src={assets.send_button} alt="" className="w-7" />
+          <img src={assets.send_button} alt="" className="w-10" />
         </button>
       </div>
     </div>

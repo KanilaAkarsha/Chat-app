@@ -50,8 +50,8 @@ const RightSideBar = ({ toggleRightSideBar }) => {
             ))}
           </div>
         </div>
-        <div className="absolute bottom-5 left-1/2 transform w-[90%] -translate-x-1/2 bg-linear-to-r from-red-400 to-violet-600 text-white border-none text-sm font-light py-2 px-10 rounded-full cursor-pointer ">
-          <ClearChatButton />
+        <div className="absolute bottom-5 left-1/2 transform w-[80%] items-center -translate-x-1/2 bg-linear-to-r from-red-400 to-violet-600 text-white border-none text-sm font-light py-2 px-10 rounded-full cursor-pointer ">
+          <ClearChatButton className="text-white items-center cursor-pointer" />
         </div>
       </div>
     )

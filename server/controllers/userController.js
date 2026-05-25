@@ -112,6 +112,81 @@ export const checkAuth = async (req, res) => {
   });
 };
 
+export const checkPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password is required" });
+    }
+
+    // fetch full user (including password)
+    const user = await User.findById(req.user._id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Incorrect password" });
+    }
+
+    res.json({ success: true, message: "Password verified" });
+  } catch (error) {
+    console.log("Error in checkPassword:", error);
+    res.json({
+      success: false,
+      message: "Error verifying password",
+      error: error.message,
+    });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Both current and new passwords are required",
+        });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Current password is incorrect" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashed = await bcrypt.hash(newPassword, salt);
+    user.password = hashed;
+    await user.save();
+
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.log("Error in changePassword:", error);
+    res.json({
+      success: false,
+      message: "Error changing password",
+      error: error.message,
+    });
+  }
+};
+
 export const updateProfile = async (req, res) => {
   const { fullName, bio, profilePic } = req.body;
   try {
