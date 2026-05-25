@@ -11,23 +11,27 @@ const HomePage = () => {
   const toggleRightSideBar = () => {
     setShowRightSideBar((prev) => !prev);
   };
+  let gridClass = "md:grid-cols-2";
+  if (selectedUser) {
+    if (showRightSideBar) {
+      gridClass = "md:grid-cols-[1fr_1.5fr_1fr] xl:grid-cols-[1fr_2fr_1fr]";
+    } else {
+      gridClass = "md:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]";
+    }
+  }
 
   return (
     <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
       <div
-        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${
-          selectedUser
-            ? showRightSideBar
-              ? "md:grid-cols-[1fr_1.5fr_1fr] xl:grid-cols-[1fr_2fr_1fr]"
-              : "md:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]"
-            : "md:grid-cols-2"
-        }`}>
+        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${gridClass}`}>
         <SideBar />
         <ChatContainer
           showRightSideBar={showRightSideBar}
           toggleRightSideBar={toggleRightSideBar}
         />
-        {selectedUser && showRightSideBar && <RightSideBar />}
+        {selectedUser && showRightSideBar && (
+          <RightSideBar toggleRightSideBar={toggleRightSideBar} />
+        )}
       </div>
     </div>
   );

@@ -1,18 +1,23 @@
 import { useContext } from "react";
+import PropTypes from "prop-types";
 import assets from "../assets/assets";
 import ChatContext from "../../context/ChatContext.js";
 import AuthContext from "../../context/AuthContext.js";
 
-const RightSideBar = () => {
+const RightSideBar = ({ toggleRightSideBar }) => {
   const { selectedUser, messages } = useContext(ChatContext);
   const { logout, onlineUsers } = useContext(AuthContext);
   const msgImages = messages.filter((msg) => msg.image).map((msg) => msg.image);
   return (
     selectedUser && (
       <div
-        className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll ${
-          selectedUser ? "max-md:hidden" : ""
-        }`}>
+        className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll md:relative md:block max-md:fixed max-md:inset-0 max-md:w-[85%] max-md:left-0 max-md:top-0 max-md:z-50 max-md:overflow-y-auto max-md:bg-[#0b1020]/95`}>
+        <button
+          type="button"
+          onClick={() => toggleRightSideBar?.()}
+          className="md:hidden absolute top-4 right-4 z-60 bg-black/40 p-2 rounded-full">
+          ✕
+        </button>
         <div className="pt-16 flex flex-col items-center gap-2 text-xs font-light mx-auto">
           <img
             src={selectedUser?.profilePic || assets.avatar_icon}
@@ -51,6 +56,10 @@ const RightSideBar = () => {
       </div>
     )
   );
+};
+
+RightSideBar.propTypes = {
+  toggleRightSideBar: PropTypes.func,
 };
 
 export default RightSideBar;

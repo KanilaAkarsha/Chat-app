@@ -103,11 +103,11 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
               <img
                 src={msg.image}
                 alt="message pic"
-                className="max-w-[230px] border border-gray-700 rounded-lg overflow-hidden mb-8"
+                className="max-w-[70%] sm:max-w-[55%] md:max-w-[230px] border border-gray-700 rounded-lg overflow-hidden mb-8"
               />
             ) : (
               <p
-                className={`p-2 mb-3 max-w-[200px] md:text-sm font-light rounded-lg md:8 break-all bg-violet-500/30 text-white ${
+                className={`p-2 mb-3 max-w-[70%] sm:max-w-[55%] md:max-w-[200px] text-sm font-light rounded-lg break-all bg-violet-500/30 text-white ${
                   msg.senderId === authUser._id
                     ? "rounded-br-none"
                     : "rounded-bl-none"
@@ -123,7 +123,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
                     : selectedUser?.profilePic || assets.avatar_icon
                 }
                 alt=""
-                className="w-7 h-7 rounded-full"
+                className="w-8 h-8 md:w-7 md:h-7 rounded-full"
               />
               <p className="text-gray-500 text-[10px]">
                 {formatMessageTime(msg.createdAt)}
