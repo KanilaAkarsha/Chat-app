@@ -99,7 +99,7 @@ const ProfilePage = () => {
           </button>
         </form>
         <img
-          className={`max-w-54 aspect-square rounded-full mx-10 max-sm:mt-10 `}
+          className={`max-w-54 sm:hidden aspect-square rounded-full mx-10 max-sm:mt-10 `}
           src={assets.logo_icon}
           alt=""
         />
