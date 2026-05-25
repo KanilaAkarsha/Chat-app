@@ -45,7 +45,7 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen w-full bg-cover bg-no-repeat flex items-center justify-center relative p-4 ">
-      <div className="w-[50%] max-w-xl backdrop-blur-2xl text-gray-300 border-2 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg">
+      <div className="w-full max-w-xl backdrop-blur-2xl text-gray-300 border-2 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg">
         <form
           onSubmit={onSubmitHandler}
           className="flex flex-col gap-5 p-10 flex-1 min-h-[520px]">
