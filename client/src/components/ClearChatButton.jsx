@@ -18,10 +18,7 @@ const ClearChatButton = ({ className = "" }) => {
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClearChat}
-      className={`w-full py-3  ${className}`}>
+    <button type="button" onClick={handleClearChat} className={className}>
       Clear chat history
     </button>
   );
