@@ -3,15 +3,17 @@ import PropTypes from "prop-types";
 import assets from "../assets/assets";
 import ChatContext from "../../context/ChatContext.js";
 import AuthContext from "../../context/AuthContext.js";
+import ClearChatButton from "./ClearChatButton";
 
 const RightSideBar = ({ toggleRightSideBar }) => {
   const { selectedUser, messages } = useContext(ChatContext);
   const { onlineUsers } = useContext(AuthContext);
   const msgImages = messages.filter((msg) => msg.image).map((msg) => msg.image);
+
   return (
     selectedUser && (
       <div
-        className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll md:relative md:block max-md:fixed max-md:inset-y-0 max-md:right-0 max-md:left-auto max-md:w-[85%] max-md:z-50 max-md:overflow-y-auto max-md:bg-[#0b1020]/95`}>
+        className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll md:relative md:block max-md:fixed max-md:inset-0 max-md:w-full max-md:z-50 max-md:overflow-y-auto max-md:bg-[#0b1020]/95`}>
         <button
           type="button"
           onClick={() => toggleRightSideBar?.()}
@@ -47,6 +49,9 @@ const RightSideBar = ({ toggleRightSideBar }) => {
               </button>
             ))}
           </div>
+        </div>
+        <div className="px-5 pb-5 mt-5">
+          <ClearChatButton />
         </div>
       </div>
     )

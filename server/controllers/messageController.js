@@ -67,6 +67,25 @@ export const markMessageAsSeen = async (req, res) => {
   }
 };
 
+export const clearChatHistory = async (req, res) => {
+  try {
+    const { id: selectedUserId } = req.params;
+    const myId = req.user._id;
+
+    await Message.deleteMany({
+      $or: [
+        { senderId: myId, receiverId: selectedUserId },
+        { senderId: selectedUserId, receiverId: myId },
+      ],
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.log("Error clearing chat history:", error);
+    res.json({ success: false, message: "Server error" });
+  }
+};
+
 export const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;

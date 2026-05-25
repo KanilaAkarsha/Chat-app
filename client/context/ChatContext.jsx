@@ -58,6 +58,25 @@ export const ChatProvider = ({ children }) => {
     [axios, selectedUser],
   );
 
+  const clearChatHistory = useCallback(async () => {
+    if (!selectedUser) return;
+
+    try {
+      const { data } = await axios.delete(
+        `/api/messages/clear/${selectedUser._id}`,
+      );
+
+      if (data.success) {
+        setMessages([]);
+        toast.success("Chat history cleared");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }, [axios, selectedUser]);
+
   useEffect(() => {
     if (!socket) return;
 
@@ -91,6 +110,7 @@ export const ChatProvider = ({ children }) => {
       getUsers,
       getMessages,
       sendMessage,
+      clearChatHistory,
       setSelectedUser,
       unseenMessages,
       setUnseenMessages,
@@ -102,6 +122,7 @@ export const ChatProvider = ({ children }) => {
       getUsers,
       getMessages,
       sendMessage,
+      clearChatHistory,
       unseenMessages,
     ],
   );
