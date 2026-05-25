@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
@@ -35,25 +35,28 @@ export const AuthProvider = ({ children }) => {
     [socket],
   );
 
-  const login = async (state, credentials) => {
-    try {
-      const { data } = await axios.post(`/api/auth/${state}`, credentials);
-      if (data.success) {
-        setAuthUser(data.userData);
-        connectSocket(data.userData);
-        setToken(data.token);
-        localStorage.setItem("authUser", JSON.stringify(data.userData));
-        localStorage.setItem("token", data.token);
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
+  const login = useCallback(
+    async (state, credentials) => {
+      try {
+        const { data } = await axios.post(`/api/auth/${state}`, credentials);
+        if (data.success) {
+          setAuthUser(data.userData);
+          connectSocket(data.userData);
+          setToken(data.token);
+          localStorage.setItem("authUser", JSON.stringify(data.userData));
+          localStorage.setItem("token", data.token);
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || error.message);
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
-    }
-  };
+    },
+    [connectSocket],
+  );
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("authUser");
     setToken(null);
@@ -61,19 +64,20 @@ export const AuthProvider = ({ children }) => {
     setOnlineUsers([]);
     toast.success("Logged out successfully");
     socket?.disconnect();
-  };
+  }, [socket]);
 
-  const updateProfile = async (body) => {
+  const updateProfile = useCallback(async (body) => {
     try {
       const { data } = await axios.put("/api/auth/update-profile", body);
       if (data.success) {
         setAuthUser(data.user);
+        localStorage.setItem("authUser", JSON.stringify(data.user));
         toast.success("Profile updated successfully");
       }
     } catch (error) {
       toast.error(error.message);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -83,15 +87,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const value = {
-    axios,
-    authUser,
-    onlineUsers,
-    socket,
-    login,
-    logout,
-    updateProfile,
-  };
+  useEffect(() => {
+    // ensure socket connects when authUser is present (e.g., after refresh)
+    if (authUser) {
+      // defer to avoid synchronous setState inside effect
+      const t = setTimeout(() => connectSocket(authUser), 0);
+      return () => clearTimeout(t);
+    }
+  }, [authUser, connectSocket]);
+
+  const value = useMemo(
+    () => ({
+      axios,
+      authUser,
+      onlineUsers,
+      socket,
+      login,
+      logout,
+      updateProfile,
+    }),
+    [authUser, onlineUsers, socket, login, logout, updateProfile],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

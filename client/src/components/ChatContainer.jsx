@@ -92,7 +92,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
         </button>
       </div>
 
-      <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-5 gap-2 pb-24">
+      <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 gap-2 pb-24">
         {messages.map((msg) => (
           <div
             key={msg._id}
@@ -107,7 +107,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg md-8 break-all bg-violet-500/30 text-white ${
+                className={`p-2 mb-3 max-w-[200px] md:text-sm font-light rounded-lg md:8 break-all bg-violet-500/30 text-white ${
                   msg.senderId === authUser._id
                     ? "rounded-br-none"
                     : "rounded-bl-none"
@@ -115,7 +115,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
                 {msg.text}
               </p>
             )}
-            <div className="text-center text-xs">
+            <div className="text-center text-xs flex flex-col items-center gap-1">
               <img
                 src={
                   msg.senderId === authUser._id
@@ -125,7 +125,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
                 alt=""
                 className="w-7 h-7 rounded-full"
               />
-              <p className="text-gray-500">
+              <p className="text-gray-500 text-[10px]">
                 {formatMessageTime(msg.createdAt)}
               </p>
             </div>
