@@ -92,7 +92,7 @@ const ChatContainer = ({ showRightSideBar, toggleRightSideBar }) => {
         </button>
       </div>
 
-      <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-24">
+      <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-5 gap-2 pb-24">
         {messages.map((msg) => (
           <div
             key={msg._id}

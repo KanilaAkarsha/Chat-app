@@ -9,6 +9,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState(authUser?.fullName || "");
   const [bio, setBio] = useState(authUser?.bio || "");
+  const [profilePic, setProfilePic] = useState(authUser?.profilePic || "");
   const [isUpdating, setIsUpdating] = useState(false);
 
   const onSubmitHandler = async (e) => {
@@ -24,7 +25,7 @@ const ProfilePage = () => {
         navigate("/");
       };
     } else {
-      await updateProfile({ fullName: name, bio });
+      await updateProfile({ profilePic: profilePic, fullName: name, bio });
       navigate("/");
     }
   };
